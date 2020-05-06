@@ -1,0 +1,98 @@
+Installation
+
+Plymouth is available on the default Debian Repository, install using APT
+01
+	
+$ sudo apt install plymouth plymouth-themes
+Configuration
+Graphics Card
+
+I need to add modesetting for your graphics card by editing /etc/initramfs-tools/modules and add these lines
+For Intel Graphic Cards
+01
+02
+03
+04
+	
+# KMS
+intel_agp
+drm
+i915 modeset=1
+For Nouveau (nVidia) Graphic Cards
+01
+02
+03
+	
+# KMS
+drm
+nouveau modeset=1
+For ATI Graphic Cards
+01
+02
+03
+	
+# KMS
+drm
+radeon modeset=1
+
+I am done with configuring modesetting for our graphic card. Lets move to our bootloader with is GRUB2
+Bootloader
+
+My default bootloader is grub2, I am going to edit /etc/default/grub
+
+I have to tell grub our default screen resolution, on booting, modules and drivers are not loaded yet. I can fetch our screen resolution by typing:
+01
+	
+$ xdpyinfo | grep dimensions
+01
+	
+dimensions:    1366x768 pixels (361x203 millimeters)
+
+Here my resolution is 1366×768. I am going to find the line #GRUB_GFXMODE=640x480 in /etc/default/grub , uncomment the line and add in my resolution. Making it
+01
+	
+GRUB_GFXMODE=1366x768
+
+Search for this line GRUB_CMDLINE_LINUX_DEFAULT="quiet" and change it to:
+01
+	
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+
+Finally, update my grub configuration
+01
+	
+$ sudo update-grub2
+Themes
+
+On installing, I installed plymouth-themes package, this installs some default Plymouth themes. To view installed themes, type:
+01
+02
+03
+04
+05
+06
+07
+08
+09
+10
+	
+$ sudo plymouth-set-default-theme -l
+details
+fade-in
+glow
+script
+solar
+spinfinity
+spinner
+text
+tribar
+
+Selecting a default theme from the list of available theme above
+01
+	
+$ sudo plymouth-set-default-theme -R glow
+
+Then reboot to see effect.
+Manual Theme Install
+
+We are not only limited to themes Plymouth provided, I can install a custom theme. Download a theme and move the folder to /usr/share/plymouth/themes and still list and select the theme from the example above.
